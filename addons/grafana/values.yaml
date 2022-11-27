@@ -1,0 +1,37 @@
+serviceAccount:
+  create: false
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/actions.redirect: {"Type":"redirect","RedirectConfig":{"Host":"grafana.private.mgmt.narrator.ai","Path":"/#{path}","Port":"443","Protocol":"HTTPS","Query":"#{query}","StatusCode":"HTTP_301"}}
+    alb.ingress.kubernetes.io/actions.response-metrics-private: {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"404","messageBody":"404 page not found"}}
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:479493230127:certificate/28597d16-8d4e-4fb5-ac0e-a8f31d408dc9
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true,idle_timeout.timeout_seconds=600,routing.http2.enabled=true
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/success-codes: 200-499
+    alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=600
+    argocd.argoproj.io/sync-options: Prune=false
+  hosts:
+    - grafana.private.mgmt.narrator.ai
+  path: /
+  extraPaths:
+    - path: /metrics
+      pathType: Prefix
+      backend:
+        service:
+          name: response-metrics-private
+          port:
+            name: use-annotation
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: redirect
+          port:
+            name: use-annotation
+service:
+  type: NodePort
+

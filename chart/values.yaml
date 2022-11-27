@@ -1,0 +1,64 @@
+# Global Values
+repoUrl: 'https://github.com/nestoras/argocd.git'
+targetRevision: HEAD
+region: ''
+account: ''
+clusterName: ''
+
+
+# Argo Rollout Values
+argoRollouts:
+  enable: false
+
+awsCloudWatchMetrics:
+  enable: false
+  serviceAccountName:
+
+awsLoadBalancerController:
+  enable: false
+  serviceAccountName:
+  podDisruptionBudget:
+    maxUnavailable: 1
+
+awsForFluentBit:
+  enable: false
+  logGroupName:
+  serviceAccountName:
+
+calico:
+  enable: false
+  installation:
+  kubernetesProvider: "EKS"
+
+externalDns:
+  enable: false
+  serviceAccountName:
+  zoneIdFilter:
+
+externalSecrets:
+  enable: false
+
+karpenter:
+  enable: false
+  serviceAccountName:
+  controllerClusterEndpoint:
+  awsDefaultInstanceProfile:
+
+grafana:
+  enable: false
+  serviceAccount:
+    create: false
+
+metricsServer:
+  enable: false
+
+prometheus:
+  enable: false
+  createNamespace: true
+  serviceAccountName:
+  roleArn:
+  ampWorkspaceUrl:
+
+promtheusNodeExporter:
+  enable: false
+  serviceAccountName:
