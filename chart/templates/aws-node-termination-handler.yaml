@@ -1,27 +1,24 @@
-{{- if ((.Values.grafana).enable) }}
+{{- if and (.Values.awsNodeTerminationHandler) (.Values.awsNodeTerminationHandler.enable) -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grafana
+  name: aws-node-termination-handler
   namespace: {{ .Values.argoNamespace | default "argocd" }}
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: {{ .Values.argoProject | default "default" }}
   source:
-    repoURL: {{ required "repoUrl value is required" .Values.repoUrl }}
-    path: addons/grafana
+    repoURL: {{ .Values.repoUrl }}
+    path: addons/aws-node-termination-handler
     targetRevision: {{ .Values.targetRevision }}
     helm:
       values: |
-        grafana:
-        {{- toYaml .Values.grafana | nindent 10 }}
-      parameters:
-        - name: grafana.serviceAccount.name
-          value: {{ .Values.grafana.serviceAccountName }}
+        awsNodeTerminationHandler:
+        {{- toYaml .Values.awsNodeTerminationHandler | nindent 10 }}
   destination:
     server: {{ .Values.destinationServer | default "https://kubernetes.default.svc" }}
-    namespace: monitoring
+    namespace: kube-system
   syncPolicy:
     syncOptions:
       - CreateNamespace=true

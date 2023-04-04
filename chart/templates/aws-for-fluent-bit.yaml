@@ -35,6 +35,8 @@ spec:
     server: https://kubernetes.default.svc
     namespace: aws-for-fluent-bit
   syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
     automated:
       prune: true
     retry:
